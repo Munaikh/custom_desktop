@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -29,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   var time = DateFormat('hh:mm a').format(DateTime.now());
   WeatherFactory wf;
   Weather w;
+  Timer timer;
 
   void queryForecast() async {
     Weather forecasts = await wf.currentWeatherByCityName('Kuwait City');
@@ -37,46 +41,99 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-Icon getIcon(String weather){
-  
-  if(weather == 'clear sky'){
-    return Icon(CupertinoIcons.sun_max, color: Colors.white, size: 35,);
-  }
-  else if (weather == 'few clouds'){
-    return Icon(CupertinoIcons.cloud_sun_fill, color: Colors.white, size: 35,);
-  }
-  else if (weather == 'scattered clouds'){
-    return Icon(CupertinoIcons.cloud, color: Colors.white, size: 35,);
-  }
-  else if (weather == 'broken clouds'){
-    return Icon(CupertinoIcons.cloud_fill, color: Colors.white, size: 35,);
-  }
-  else if (weather == 'shower rain'){
-    return Icon(CupertinoIcons.cloud_heavyrain_fill, color: Colors.white, size: 35,);
-  }
-  else if (weather == 'rain'){
-    return Icon(CupertinoIcons.cloud_rain_fill, color: Colors.white, size: 35,);
-  }
-  else if (weather == 'thunderstorm'){
-    return Icon(CupertinoIcons.cloud_bolt_fill, color: Colors.white, size: 35,);
-  }
-  else if (weather == 'snow'){
-    return Icon(CupertinoIcons.cloud_snow_fill, color: Colors.white, size: 35,);
-  }else if (weather == 'mist'){
-    return Icon(CupertinoIcons.cloud_fog_fill, color: Colors.white, size: 35,);
-  }
-  else{
-    Icon(CupertinoIcons.cloud, color: Colors.white, size: 35,);
+  Icon getIcon(String weather) {
+    if (weather == 'clear sky') {
+      return Icon(
+        CupertinoIcons.sun_max,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'few clouds') {
+      return Icon(
+        CupertinoIcons.cloud_sun_fill,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'scattered clouds') {
+      return Icon(
+        CupertinoIcons.cloud,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'broken clouds') {
+      return Icon(
+        CupertinoIcons.cloud_fill,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'shower rain') {
+      return Icon(
+        CupertinoIcons.cloud_heavyrain_fill,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'rain') {
+      return Icon(
+        CupertinoIcons.cloud_rain_fill,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'thunderstorm') {
+      return Icon(
+        CupertinoIcons.cloud_bolt_fill,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'snow') {
+      return Icon(
+        CupertinoIcons.cloud_snow_fill,
+        color: Colors.white,
+        size: 35,
+      );
+    } else if (weather == 'mist') {
+      return Icon(
+        CupertinoIcons.cloud_fog_fill,
+        color: Colors.white,
+        size: 35,
+      );
+    } else {
+      return Icon(
+        CupertinoIcons.cloud,
+        color: Colors.white,
+        size: 35,
+      );
+    }
   }
 
-
-}
+  String greeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 5) {
+      return 'Evening';
+    } else if (hour < 12) {
+      return 'Morning';
+    } else if (hour < 17) {
+      return 'Afternoon';
+    }
+    return 'Evening';
+  }
 
   @override
   void initState() {
     super.initState();
     wf = WeatherFactory("72075cddc28099d40aa742a42d5e52e7");
     queryForecast();
+    timer = Timer.periodic(
+      Duration(seconds: 1),
+      (Timer t) => setState(() {
+        time = DateFormat('hh:mm a').format(DateTime.now());
+      }),
+    );
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -97,34 +154,39 @@ Icon getIcon(String weather){
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Good Afternoon, Abdullah.',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 50,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: 'SF Pro Display'),
+                  Container(
+                    child: Text(
+                      'Good ${greeting()}, Abdullah.',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 50,
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'SF Pro Display'),
+                    ),
                   ),
-                  Text(
-                    'It\'s $time.',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 40,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: 'SF Pro Display'),
+                  Container(
+                    child: Text(
+                      'It\'s $time.',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'SF Pro Display'),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
           Positioned(
-            bottom: 20,
+            bottom: 80,
             left: 20,
             child: Row(
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 0),
-                  child: getIcon('${w.weatherDescription == null ? '' : w.weatherDescription}'),
+                  child: getIcon(
+                      '${w.weatherDescription == null ? '' : w.weatherDescription}'),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -136,7 +198,7 @@ Icon getIcon(String weather){
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               fontFamily: 'SF Pro Display'),
                         ),
                         TextSpan(
@@ -145,7 +207,7 @@ Icon getIcon(String weather){
                           style: TextStyle(
                               color: Color(0xffF7BE69),
                               fontSize: 25,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               fontFamily: 'SF Pro Display'),
                         ),
                         TextSpan(
