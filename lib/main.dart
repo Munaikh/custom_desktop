@@ -1,21 +1,48 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:weather/weather.dart';
+import 'package:vrouter/vrouter.dart';
+import 'package:url_strategy/url_strategy.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  setPathUrlStrategy();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return VRouter(
       debugShowCheckedModeBanner: false,
       title: 'Flutter App',
-      home: HomePage(),
+      routes: [
+        VWidget(
+          path: '/',
+          widget: LandPage(),
+        ),
+        VWidget(
+          path: '/desktop',
+          widget: HomePage(),
+        )
+      ],
     );
+  }
+}
+
+class LandPage extends StatelessWidget {
+  const LandPage({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    context.vRouter.push(
+      '/desktop',
+      queryParameters: {'name': 'Abdullah', 'city': 'Kuwait City'},
+    );
+    return Container();
   }
 }
 
@@ -34,12 +61,13 @@ class _HomePageState extends State<HomePage> {
   Weather w;
   Timer timer;
 
-  void queryForecast() async {
-    Weather forecasts = await wf.currentWeatherByCityName('Kuwait City');
-    setState(() {
-      w = forecasts;
-    });
-  }
+  // Future<void> queryForecast() async {
+  //   Weather forecasts = await wf
+  //       .currentWeatherByCityName(context.vRouter.queryParameters['city']);
+  //   setState(() {
+  //     w = forecasts;
+  //   });
+  // }
 
   Icon getIcon(String weather) {
     if (weather == 'clear sky') {
@@ -121,7 +149,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     wf = WeatherFactory("72075cddc28099d40aa742a42d5e52e7");
-    queryForecast();
+    // queryForecast();
     timer = Timer.periodic(
       Duration(seconds: 1),
       (Timer t) => setState(() {
@@ -138,17 +166,27 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> queryForecast() async {
+      Weather forecasts = await wf
+          .currentWeatherByCityName(context.vRouter.queryParameters['city']);
+      setState(() {
+        w = forecasts;
+      });
+    }
+
+    queryForecast();
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Container(
-          //   height: MediaQuery.of(context).size.height,
-          //   child: Image.asset(
-          //     'assets/3189407.jpg',
-          //     fit: BoxFit.fill,
-          //   ),
-          // ),
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset(
+              'assets/3189407.jpg',
+              fit: BoxFit.fill,
+            ),
+          ),
           Center(
             child: Container(
               child: Column(
@@ -156,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     child: Text(
-                      'Good ${greeting()}, Abdullah.',
+                      'Good ${greeting()}, ${context.vRouter.queryParameters['name']}.',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 50,
@@ -203,7 +241,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         TextSpan(
                           text:
-                              '${w.weatherDescription == null ? '' : w.weatherDescription} ',
+                              '${w.weatherDescription != null ? w.weatherDescription : ''} ',
                           style: TextStyle(
                               color: Color(0xffF7BE69),
                               fontSize: 25,
