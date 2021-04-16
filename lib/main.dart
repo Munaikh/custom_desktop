@@ -179,14 +179,14 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              'assets/3189407.jpg',
-              fit: BoxFit.fill,
-            ),
-          ),
+          // Container(
+          //   height: MediaQuery.of(context).size.height,
+          //   width: MediaQuery.of(context).size.width,
+          //   child: Image.asset(
+          //     'assets/3189407.jpg',
+          //     fit: BoxFit.fill,
+          //   ),
+          // ),
           Center(
             child: Container(
               child: Column(
