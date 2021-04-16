@@ -1,6 +1,6 @@
 # Custom Desktop
 
-![preview](https://i.imgur.com/V65m5hr.jpg)
+![preview](https://i.imgur.com/V65m5hr.jpg) ![preview](https://i.imgur.com/bbOVZEt.jpg)
 ## Installation
 
 1. First you'll need to install [plash](https://sindresorhus.com/plash) for free!
