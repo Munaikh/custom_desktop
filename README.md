@@ -11,18 +11,7 @@
 ## Usage
 __you can set your custom name and city!__
 
-to set your name:
 ```url
-https://desktop-design.netlify.app/?name=yourName
-```
-to set your city:
-```url
-https://desktop-design.netlify.app/?city=yourCity
-```
-for both of them:
-```url
-https://desktop-design.netlify.app/?name=yourName&city=Kuwait
+https://desktop-design.netlify.app/desktop?name=yourName&city=yourCity
 ```
 
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
