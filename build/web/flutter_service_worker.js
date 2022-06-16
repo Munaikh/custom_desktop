@@ -3,28 +3,34 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "version.json": "0e9d833b21eb98515f35f1d75d06f5a7",
-"index.html": "231f952057fcc027759d8d68f736152a",
-"/": "231f952057fcc027759d8d68f736152a",
-"main.dart.js": "b2a91185fb843088931119a8934a6f79",
+  "version.json": "010097f6985fb5b0126c90ce989d5b7b",
+"index.html": "2edb05ed9a88ede05ef8883be03feff8",
+"/": "2edb05ed9a88ede05ef8883be03feff8",
+"main.dart.js": "ba2ee7c4a42e0dba814a2457df687336",
+"flutter.js": "0816e65a103ba8ba51b174eeeeb2cb67",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
+"icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
+"icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "manifest.json": "462d4b9a9cea2784a5e64d26dd993dd3",
 "assets/AssetManifest.json": "2b8d266d7694bd4774a755df800fb4ce",
-"assets/NOTICES": "c5f440c278aef7dca8029df65df57d39",
+"assets/NOTICES": "ae98c46cceac8af76dd1f739de57dedd",
 "assets/FontManifest.json": "c700f6b9003f0c18baf2fcba906fa182",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
 "assets/fonts/SF-Pro-Display-Bold.otf": "94348d7ee70c258261a757b66596c4f9",
-"assets/fonts/MaterialIcons-Regular.otf": "1288c9e28052e028aba623321f7826ac",
-"assets/assets/3189407.jpg": "4f1e21bd6c325fcb7ab93594df9cdd08"
+"assets/fonts/MaterialIcons-Regular.otf": "95db9098c58fd6db106f1116bae85a0b",
+"assets/assets/3189407.jpg": "4f1e21bd6c325fcb7ab93594df9cdd08",
+"canvaskit/canvaskit.js": "c2b4e5f3d7a3d82aed024e7249a78487",
+"canvaskit/profiling/canvaskit.js": "ae2949af4efc61d28a4a80fffa1db900",
+"canvaskit/profiling/canvaskit.wasm": "95e736ab31147d1b2c7b25f11d4c32cd",
+"canvaskit/canvaskit.wasm": "4b83d89d9fecbea8ca46f2f760c5a9ba"
 };
 
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = [
-  "/",
-"main.dart.js",
+  "main.dart.js",
 "index.html",
 "assets/NOTICES",
 "assets/AssetManifest.json",
@@ -35,7 +41,7 @@ self.addEventListener("install", (event) => {
   return event.waitUntil(
     caches.open(TEMP).then((cache) => {
       return cache.addAll(
-        CORE.map((value) => new Request(value + '?revision=' + RESOURCES[value], {'cache': 'reload'})));
+        CORE.map((value) => new Request(value, {'cache': 'reload'})));
     })
   );
 });

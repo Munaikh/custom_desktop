@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:weather/weather.dart';
 import 'package:vrouter/vrouter.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:location/location.dart';
 
 void main() {
   setPathUrlStrategy();
@@ -20,29 +21,10 @@ class MyApp extends StatelessWidget {
       routes: [
         VWidget(
           path: '/',
-          widget: LandPage(),
-        ),
-        VWidget(
-          path: '/desktop',
           widget: HomePage(),
-        )
+        ),
       ],
     );
-  }
-}
-
-class LandPage extends StatelessWidget {
-  const LandPage({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    context.vRouter.push(
-      '/desktop',
-      queryParameters: {'name': 'Abdullah', 'city': 'Kuwait City'},
-    );
-    return Container();
   }
 }
 
@@ -60,6 +42,29 @@ class _HomePageState extends State<HomePage> {
   WeatherFactory wf;
   Weather w;
   Timer timer;
+  Location location = Location();
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+
+  Future<void> getLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    _locationData = await location.getLocation();
+  }
 
   // Future<void> queryForecast() async {
   //   Weather forecasts = await wf
@@ -150,6 +155,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     wf = WeatherFactory("72075cddc28099d40aa742a42d5e52e7");
     // queryForecast();
+    getLocation();
     timer = Timer.periodic(
       Duration(seconds: 1),
       (Timer t) => setState(() {
@@ -167,8 +173,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Future<void> queryForecast() async {
-      Weather forecasts = await wf
-          .currentWeatherByCityName(context.vRouter.queryParameters['city']);
+      Weather forecasts = await wf.currentWeatherByLocation(
+          _locationData.latitude, _locationData.longitude);
       setState(() {
         w = forecasts;
       });
@@ -179,14 +185,14 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Container(
-          //   height: MediaQuery.of(context).size.height,
-          //   width: MediaQuery.of(context).size.width,
-          //   child: Image.asset(
-          //     'assets/3189407.jpg',
-          //     fit: BoxFit.fill,
-          //   ),
-          // ),
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset(
+              'assets/3189407.jpg',
+              fit: BoxFit.fill,
+            ),
+          ),
           Center(
             child: Container(
               child: Column(
@@ -194,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     child: Text(
-                      'Good ${greeting()}, ${context.vRouter.queryParameters['name']}.',
+                      'Good ${greeting()}, Abdullah.',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 50,
